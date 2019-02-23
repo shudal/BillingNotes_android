@@ -1,0 +1,100 @@
+<resources>
+    <string name="SERVER_ADDRESS_TXT_URL">https://raw.githubusercontent.com/shudal/billing/master/server_address.txt</string>
+    <string name="server_failed_message_text_url">https://raw.githubusercontent.com/shudal/billing/master/serverFailedMessage.txt</string>
+    <string name="get_server_failed_message_failed">Failed to get failure message from https://raw.githubusercontent.com/shudal/billing/master/serverFailedMessage.txt, probably because did not even get to the Internet, it may also be because github has been banned.</string>
+    <string name="STATIC">http://132.232.57.130/static/</string>
+    <string name="static_url_txt">https://raw.githubusercontent.com/shudal/billing/master/static_url</string>
+
+    <string name="app_name">My Application</string>
+
+    <string name="login">Sign in</string>
+    <string name="regis">Sign up</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="email">email</string>
+    <string name="username_require">please enter username</string>
+    <string name="password_require">please enter the password</string>
+    <string name="username_too_long">username too long</string>
+    <string name="password_too_long">password too long</string>
+    <string name="username_not_exist">username does not exist</string>
+    <string name="password_wrong">wrong password</string>
+
+    <string name="invalid_request_way">request method error</string>
+    <string name="login_expired">login information has expired</string>
+    <string name="login_invalid">login information fails to verify</string>
+    <string name="unknown_error">unknown error</string>
+    <string name="illegal_request">illegal request</string>
+
+    <string name="login_success">login successfully</string>
+    <string name="login_failed">login failed</string>
+
+
+    <string name="add">add</string>
+    <string name="all">all</string>
+    <string name="me">mine</string>
+    <string name="add_success">add success</string>
+    <string name="add_failed">add failed</string>
+
+
+    <string name="AddF_year">year</string>
+    <string name="AddF_month">month</string>
+    <string name="AddF_day">day</string>
+    <string name="year_wrong">wrong year</string>
+    <string name="month_wrong">wrong month</string>
+    <string name="day_wrong">wrong day</string>
+
+    <string name="select_date">select date</string>
+    <string name="select_io">select way</string>
+    <string name="select_form">select form</string>
+    <string name="amount_require">enter mount</string>
+    <string name="io_require">select way(get/use</string>
+    <string name="form_require">select form(such as cash</string>
+
+    <string name="use">use</string>
+    <string name="get">get</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
+    <string name="in">in</string>
+
+    <string name="cash">cash</string>
+    <string name="WeChat">WeChat</string>
+    <string name="AliPay">AliPay</string>
+    <string name="other">other</string>
+    <string name="main">from/to</string>
+    <string name="amount">amount</string>
+    <string name="content">comment</string>
+
+    <string name="success">success</string>
+    <string name="failure">failure</string>
+
+    <string name="server_address_changed">server address has changed, you need to download the new version. </string>
+
+    <string name="empty">empty</string>
+    <string name="sum">sum</string>
+    <string name="month_used">Month Used</string>
+    <string name="search_condition">Search Condition :</string>
+    <string name="today">Today</string>
+    <string name="month_remaining">Month Remaining</string>
+    <string name="day_average">Ideal Day Average</string>
+
+    <string name="nickname">Nickname</string>
+    <string name="start_day">Start day</string>
+    <string name="month_fee">Month Plan</string>
+    <string name="feedback">Feedback</string>
+    <string name="user_konw">The user instructions</string>
+
+    <string name="certain">Submit</string>
+    <string name="cancle">Cancle</string>
+
+    <string name="too_quick">Operation frequency too fast, please try later</string>
+    <string name="too_short">too short</string>
+
+    <string name="starting">The software is startingg</string>
+    <string name="tip">Tip</string>
+    <string name="initialing">Initialization is not complete, please try one second later</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="cannot_be_null">Can not be null.</string>
+    <string name="plaese_confirm_email">has sent the verification email to the specified mailbox. Please click the link in the email to complete the last step of registration</string>
+    <string name="email_existed">This email address has been registered</string>
+    <string name="logout">Log out</string>
+</resources>

@@ -1,0 +1,104 @@
+<resources>
+    <string name="SERVER_ADDRESS_TXT_URL">https://raw.githubusercontent.com/shudal/billing/master/server_address.txt</string>
+    <string name="server_failed_message_text_url">https://raw.githubusercontent.com/shudal/billing/master/serverFailedMessage.txt</string>
+    <string name="get_server_failed_message_failed">未能成功从https://raw.githubusercontent.com/shudal/billing/master/serverFailedMessage.txt获取服务器失败的失败消息，可能是因为没连上网，也可能是因为github被ban了。</string>
+    <string name="STATIC">http://132.232.57.130/static/</string>
+    <string name="static_url_txt">https://raw.githubusercontent.com/shudal/billing/master/static_url</string>
+
+    <string name="app_name">Billing Notes</string>
+
+    <string name="login">登陆</string>
+    <string name="regis">注册</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="email">邮箱</string>
+    <string name="username_require">请输入用户名</string>
+    <string name="password_require">请输入密码</string>
+    <string name="username_too_long">用户名过长</string>
+    <string name="password_too_long">密码过长</string>
+    <string name="username_not_exist">用户名不存在</string>
+    <string name="password_wrong">密码错误</string>
+
+    <string name="invalid_request_way">请求方法错误</string>
+    <string name="login_expired">登陆信息已经过期</string>
+    <string name="login_invalid">登陆信息验证失败</string>
+    <string name="unknown_error">出现未知错误</string>
+    <string name="illegal_request">非法请求</string>
+
+    <string name="login_success">登陆成功</string>
+    <string name="login_failed">登陆失败</string>
+
+
+    <string name="add">新增</string>
+    <string name="all">所有</string>
+    <string name="me">我的</string>
+    <string name="add_success">新增成功</string>
+    <string name="add_failed">新增失败</string>
+
+
+    <string name="AddF_year">年</string>
+    <string name="AddF_month">月</string>
+    <string name="AddF_day">日</string>
+    <string name="year_wrong">年份 错误</string>
+    <string name="month_wrong">月份 错误</string>
+    <string name="day_wrong">日 错误</string>
+
+    <string name="select_date">选择日期</string>
+    <string name="select_io">选择方式</string>
+    <string name="select_form">选择形式</string>
+    <string name="amount_require">请输入金额</string>
+    <string name="io_require">请选择方式（得到/使用</string>
+    <string name="form_require">请选择形式（如现金</string>
+
+    <string name="use">使用</string>
+    <string name="get">得到</string>
+    <string name="from">从</string>
+    <string name="to">到</string>
+    <string name="in">于</string>
+
+    <string name="cash">现金</string>
+    <string name="WeChat">微信</string>
+    <string name="AliPay">支付宝</string>
+    <string name="other">其他</string>
+    <string name="main">第三方</string>
+    <string name="amount">金额</string>
+    <string name="content">理由</string>
+
+    <string name="success">成功</string>
+    <string name="failure">失败</string>
+
+    <string name="server_address_changed">服务器地址已经更换，您需要下载新的版本。</string>
+
+    <string name="empty">暂无</string>
+
+    <string name="sum">总计</string>
+    <string name="month_used">本月已用</string>
+    <string name="search_condition">筛选条件 :</string>
+    <string name="today">今日</string>
+    <string name="month_remaining">本月可用</string>
+    <string name="day_average">理应日均</string>
+
+    <string name="nickname">昵称</string>
+    <string name="start_day">月始</string>
+    <string name="month_fee">每月计划</string>
+    <string name="feedback">反馈</string>
+    <string name="user_konw">用户须知</string>
+
+    <string name="certain">确定</string>
+    <string name="cancle">取消</string>
+
+    <string name="too_quick">操作频率太快，请稍后再试</string>
+    <string name="too_short">很短</string>
+
+    <string name="starting">程序启动ing</string>
+
+    <string name="tip">提示</string>
+    <string name="initialing">初始化尚未完成，请一秒后再试</string>
+
+    <string name="invalid_email">邮箱格式不正确</string>
+    <string name="email_existed">邮箱已存在</string>
+    <string name="cannot_be_null">不能为空</string>
+    <string name="plaese_confirm_email">已将验证邮件发送只指定邮箱，请在邮件中点击链接来完成注册的最后一步</string>
+    <string name="logout">退出登陆</string>
+
+</resources>

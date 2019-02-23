@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tab_menu_add"
+        android:icon="@drawable/add"
+        android:title="@string/add" />
+    <item
+        android:id="@+id/tab_menu_all"
+        android:icon="@drawable/all"
+        android:title="@string/today" />
+    <item
+        android:id="@+id/tab_menu_me"
+        android:icon="@drawable/me"
+        android:title="@string/me" />
+
+</menu>
