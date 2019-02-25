@@ -1,14 +1,21 @@
 package com.example.perci.myapplication;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,10 +54,56 @@ public class Msg {
         map.put("empty", "空");
 
         map.put("too_quick", context.getString(R.string.too_quick));
+        map.put("need_update", context.getString(R.string.need_update));
     }
 
     public String get(String key) {
         String message = context.getString(R.string.unknown_error);
+
+        /*
+        try {
+            if (key.equals("need_update")) {
+                Looper.prepare();
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                AlertDialog dialog = builder.create();
+                View dialogView = View.inflate(context, R.layout.user_state, null);
+
+                WebView webView = (WebView) dialogView.findViewById(R.id.user_state_web);
+                webView.setWebViewClient(new WebViewClient() {
+
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                        view.loadUrl(url);
+                        return true;
+                    }
+                });
+
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.getSettings().setDomStorageEnabled(true);
+                webView.getSettings().setBuiltInZoomControls(true);
+                webView.loadUrl(MainActivity.SERVER_URL + "/prompt");
+
+                dialog.setView(dialogView);
+                dialog.setCancelable(false);
+                dialog.show();
+                Window window = dialog.getWindow();
+                //这一句消除白块
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button btnSubmit = (Button) dialogView.findViewById(R.id.user_state_certain);
+
+                btnSubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                Looper.loop();
+            }
+        }catch (Exception e) {
+                Log.v("Msg.java", "error:" + e.getMessage());
+        } */
         try {
             message = map.get(key);
 

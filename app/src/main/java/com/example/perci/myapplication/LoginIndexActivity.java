@@ -44,6 +44,7 @@ public class LoginIndexActivity extends AppCompatActivity {
             if (now < timeout_2) {
                 Intent intent = new Intent(this, IndexActivity.class);
                 startActivity(intent);
+                finish();
             }
         }
     }

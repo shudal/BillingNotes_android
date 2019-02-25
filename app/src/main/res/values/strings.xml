@@ -4,6 +4,7 @@
     <string name="get_server_failed_message_failed">未能成功从https://raw.githubusercontent.com/shudal/billing/master/serverFailedMessage.txt获取服务器失败的失败消息，可能是因为没连上网，也可能是因为github被ban了。</string>
     <string name="STATIC">http://132.232.57.130/static/</string>
     <string name="static_url_txt">https://raw.githubusercontent.com/shudal/billing/master/static_url</string>
+    <string name="versionCode">1.0</string>
 
     <string name="app_name">Billing Notes</string>
 
@@ -100,5 +101,7 @@
     <string name="cannot_be_null">不能为空</string>
     <string name="plaese_confirm_email">已将验证邮件发送只指定邮箱，请在邮件中点击链接来完成注册的最后一步</string>
     <string name="logout">退出登陆</string>
+
+    <string name="need_update">当前版本过低，请更新到最新版本。</string>
 
 </resources>

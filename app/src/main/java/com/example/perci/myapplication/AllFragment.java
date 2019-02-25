@@ -2,6 +2,7 @@ package com.example.perci.myapplication;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +10,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.INotificationSideChannel;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +21,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +59,56 @@ public class AllFragment extends Fragment {
     public static int remaining_day = 0;
 
     private OnFragmentInteractionListener mListener;
+
+    public Handler disCertain = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            try {
+                Button button = (Button) getActivity().findViewById(R.id.AllF_b_certain);
+                Button button1 = (Button) getActivity().findViewById(R.id.AllF_b_cancle);
+
+                Spinner spinner = (Spinner) getActivity().findViewById(R.id.AllF_sp_year);
+                String selected_year = spinner.getSelectedItem().toString();
+
+                spinner = (Spinner) getActivity().findViewById(R.id.AllF_sp_month);
+                String selected_month = spinner.getSelectedItem().toString();
+
+                spinner = (Spinner) getActivity().findViewById(R.id.AllF_sp_day);
+                String selected_day = spinner.getSelectedItem().toString();
+
+                if ((!selected_year.equals(IndexActivity.which_year)) || (!selected_month.equals(IndexActivity.which_month)) || (!selected_day.equals(IndexActivity.which_day))) {
+                    button.setVisibility(View.VISIBLE);
+                    button1.setVisibility(View.VISIBLE);
+                    Log.v("my_all", "selected:" + selected_year + selected_month + selected_day);
+                    Log.v("my_all","which:" + IndexActivity.which_year + IndexActivity.which_month + IndexActivity.which_day);
+                    Log.v("my_all", "selected different");
+                    IndexActivity.which_year = selected_year;
+                    IndexActivity.which_month = selected_month;
+                    IndexActivity.which_day = selected_day;
+
+
+                    Log.v("my_all","now which:" + IndexActivity.which_year + IndexActivity.which_month + IndexActivity.which_day);
+
+
+                } else {
+                    button.setVisibility(View.GONE);
+                    button1.setVisibility(View.GONE);
+                    Log.v("my_all", "selected:" + selected_year + selected_month + selected_day);
+                    Log.v("my_all","which:" + IndexActivity.which_year + IndexActivity.which_month + IndexActivity.which_day);
+                    Log.v("my_all", "selected same");
+                }
+            } catch (Exception e) {
+                try {
+                    Toast.makeText(getContext(), getString(R.string.unknown_error), Toast.LENGTH_SHORT);
+                } catch (Exception e2) {
+
+                }
+            }
+
+            return  true;
+        }
+    });
 
     public Handler uiHandler=new Handler(new Handler.Callback() {
         @Override
@@ -123,6 +182,111 @@ public class AllFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_all, container, false);
+
+        Calendar cal = Calendar.getInstance();
+        int default_year = cal.get(Calendar.YEAR);
+        int default_month = cal.get(Calendar.MONTH) + 1;
+        int default_day = cal.get(Calendar.DAY_OF_MONTH);
+
+        Spinner spinner = (Spinner) v.findViewById(R.id.AllF_sp_year);
+        final ArrayList datalist1 = new ArrayList<String>();
+        datalist1.add("" + IndexActivity.which_year);
+
+        for(int i = default_year ; i >= default_year-2; i--) {
+            if (i != Integer.parseInt(IndexActivity.which_year)) {
+                datalist1.add("" + i);
+            }
+        }
+
+        SpinnerAdapter adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist1);
+        spinner.setAdapter(adaper);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disCertain.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
+
+        spinner = (Spinner) v.findViewById(R.id.AllF_sp_month);
+        final ArrayList datalist2 = new ArrayList<String>();
+        datalist2.add(IndexActivity.which_month + "");
+        for (int i = default_month; ; i--) {
+            if (i == default_month && (datalist2.size() == 12)) {
+                break;
+            }
+            if (i != Integer.parseInt(IndexActivity.which_month)) {
+                datalist2.add(i + "");
+            }
+            if (i == 1) {
+                i = 13;
+            }
+        }
+        adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist2);
+        spinner.setAdapter(adaper);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disCertain.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
+
+        spinner = (Spinner) v.findViewById(R.id.AllF_sp_day);
+        final ArrayList datalist3 = new ArrayList<String>();
+        datalist3.add(IndexActivity.which_day + "");
+
+        MonthDay monthDay = new MonthDay();
+        for (int i = default_day; ; i--) {
+            if (i == default_day && (datalist3.size() >= 28) ) {
+                break;
+            }
+            if ((i != Integer.parseInt(IndexActivity.which_day))) {
+                datalist3.add(i + "");
+            }
+            if (i == 1) i= monthDay.getByMonthDay(Integer.parseInt(IndexActivity.which_month)) + 1;
+
+        }
+        adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist3);
+        spinner.setAdapter(adaper);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disCertain.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
+
+        /*
+        Button button = (Button) v.findViewById(R.id.AllF_b_certain);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        button = (Button) v.findViewById(R.id.AllF_b_cancle);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
+        */
+
         return v;
     }
 
@@ -160,12 +324,7 @@ public class AllFragment extends Fragment {
         int default_year = cal.get(Calendar.YEAR);
         int default_month = cal.get(Calendar.MONTH) + 1;
         int default_day = cal.get(Calendar.DAY_OF_MONTH);
-        try {
-            TextView textView = getActivity().findViewById(R.id.AllF_today);
-            textView.setText(" " + default_year + "  " + default_month + "  " + default_day);
-        } catch (Exception e) {
-            Toast.makeText(getContext(), getString(R.string.initialing), Toast.LENGTH_SHORT).show();
-        }
+
         try {
             this.recyclerView = (RecyclerView) getView().findViewById(R.id.AllF_re);
             Log.v("AllF", "get recycler view success.:" + this.recyclerView);
@@ -189,7 +348,8 @@ public class AllFragment extends Fragment {
         sha1.setS(token);
         token = sha1.data;
 
-        String  the_url = MainActivity.SERVER_URL + "bills?sessionid=" + sessionid + "&token=" + token;
+        String  str_now_day = IndexActivity.which_year + "-" + IndexActivity.which_month + "-" + IndexActivity.which_day;
+        String  the_url = MainActivity.SERVER_URL + "bills?sessionid=" + sessionid + "&token=" + token + "&start_time=" + str_now_day + "&end_time=" + str_now_day + "&version=" + getString(R.string.versionCode);
 
         Request request;
         request = new Request.Builder()
@@ -301,5 +461,36 @@ public class AllFragment extends Fragment {
             Msg  msg = new Msg(getContext());
             msg.certainMsg(getString(R.string.unknown_error),getString(R.string.certain));
         }
+
+        disCertain.sendEmptyMessage(0);
+
+        try {
+            Button button = getActivity().findViewById(R.id.AllF_b_certain);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        Fragment AllF  = AllFragment.newInstance();
+                        fragmentManager.beginTransaction().replace(R.id.home_container, AllF).commit();
+                        //getActivity().finish();
+                    } catch (Exception e) {
+
+                    }
+                }
+            });
+
+            Button button2 = getActivity().findViewById(R.id.AllF_b_cancle);
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   button.setVisibility(View.GONE);
+                   button2.setVisibility(View.GONE);
+                }
+            });
+        } catch (Exception e) {
+
+        }
+
     }
 }

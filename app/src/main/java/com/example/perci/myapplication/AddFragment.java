@@ -88,7 +88,19 @@ public class AddFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     dialog.dismiss();
+
+                    if (addStatusMessage.equals(getString(R.string.success))) {
+                        EditText editText = (EditText) getActivity().findViewById(R.id.AddP_main);
+                        editText.setText("");
+
+                        editText = (EditText) getActivity().findViewById(R.id.AddP_sum);
+                        editText.setText("");
+
+                        editText = (EditText) getActivity().findViewById(R.id.AddF_content);
+                        editText.setText("");
+                    }
                 }
             });
 
@@ -129,6 +141,7 @@ public class AddFragment extends Fragment {
                 }
             }
         });
+
 
         //设置默认时间
         Calendar cal = Calendar.getInstance();
@@ -238,6 +251,7 @@ public class AddFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         try {
+
             Button submit = (Button) getActivity().findViewById(R.id.AddF_submit);
             submit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -296,6 +310,7 @@ public class AddFragment extends Fragment {
                                 .add("content", content)
                                 .add("sessionid", sessionid)
                                 .add("token", token)
+                                .add("version", getString(R.string.versionCode))
                                 .build();
 
                         final Request request = new Request.Builder()

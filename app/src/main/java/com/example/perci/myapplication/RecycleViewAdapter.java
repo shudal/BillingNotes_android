@@ -54,7 +54,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
                 }
             }
             holder.bill_information.setText(bi);
-            holder.bill_content.setText(map.get( "P.S : " + "content"));
+            holder.bill_content.setText("P.S." + map.get("content"));
             Log.v("AllF", "set bill information success  ");
         } catch (Exception e) {
             Log.v("AllF", "set bill informtion  faild:" + e.getMessage());
