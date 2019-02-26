@@ -1,20 +1,13 @@
 package com.example.perci.myapplication;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.INotificationSideChannel;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -58,45 +51,42 @@ public class AllFragment extends Fragment {
     public static double day_average;
     public static int remaining_day = 0;
 
+    public String selected_year;
+    public String selected_month;
+    public String selected_day;
+
     private OnFragmentInteractionListener mListener;
+
+    public  ArrayList datalist1;
+    public  ArrayList datalist2;
+    public  ArrayList datalist3;
+
+    public Spinner sp_year;
+    public Spinner sp_month;
+    public Spinner sp_day;
+
+    public Button btn_certain;
+    public Button btn_cancel;
+
+    public int default_year;
+    public int default_month;
+    public int default_day;
 
     public Handler disCertain = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
 
             try {
-                Button button = (Button) getActivity().findViewById(R.id.AllF_b_certain);
-                Button button1 = (Button) getActivity().findViewById(R.id.AllF_b_cancle);
-
-                Spinner spinner = (Spinner) getActivity().findViewById(R.id.AllF_sp_year);
-                String selected_year = spinner.getSelectedItem().toString();
-
-                spinner = (Spinner) getActivity().findViewById(R.id.AllF_sp_month);
-                String selected_month = spinner.getSelectedItem().toString();
-
-                spinner = (Spinner) getActivity().findViewById(R.id.AllF_sp_day);
-                String selected_day = spinner.getSelectedItem().toString();
+                selected_year = sp_year.getSelectedItem().toString();
+                selected_month = sp_month.getSelectedItem().toString();
+                selected_day = sp_day.getSelectedItem().toString();
 
                 if ((!selected_year.equals(IndexActivity.which_year)) || (!selected_month.equals(IndexActivity.which_month)) || (!selected_day.equals(IndexActivity.which_day))) {
-                    button.setVisibility(View.VISIBLE);
-                    button1.setVisibility(View.VISIBLE);
-                    Log.v("my_all", "selected:" + selected_year + selected_month + selected_day);
-                    Log.v("my_all","which:" + IndexActivity.which_year + IndexActivity.which_month + IndexActivity.which_day);
-                    Log.v("my_all", "selected different");
-                    IndexActivity.which_year = selected_year;
-                    IndexActivity.which_month = selected_month;
-                    IndexActivity.which_day = selected_day;
-
-
-                    Log.v("my_all","now which:" + IndexActivity.which_year + IndexActivity.which_month + IndexActivity.which_day);
-
-
+                    btn_certain.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                 } else {
-                    button.setVisibility(View.GONE);
-                    button1.setVisibility(View.GONE);
-                    Log.v("my_all", "selected:" + selected_year + selected_month + selected_day);
-                    Log.v("my_all","which:" + IndexActivity.which_year + IndexActivity.which_month + IndexActivity.which_day);
-                    Log.v("my_all", "selected same");
+                    btn_certain.setVisibility(View.GONE);
+                    btn_cancel.setVisibility(View.GONE);
                 }
             } catch (Exception e) {
                 try {
@@ -105,9 +95,18 @@ public class AllFragment extends Fragment {
 
                 }
             }
-
             return  true;
         }
+    });
+
+    public  Handler disPrompt=new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            Msg msg1 = new Msg(getContext());
+            msg1.disPrompt();
+            return true;
+        }
+
     });
 
     public Handler uiHandler=new Handler(new Handler.Callback() {
@@ -152,6 +151,11 @@ public class AllFragment extends Fragment {
                 textView.setWidth(textView2.getWidth());
 
                 AllFragment.recyclerView.setAdapter(new RecycleViewAdapter(getActivity(), AllFragment.bills));
+
+                sp_year.setSelection(0, true);
+                sp_month.setSelection(0,true);
+                sp_day.setSelection(0,true);
+
             } catch (Exception e) {
                 try {
                     Toast.makeText(getContext(), getString(R.string.initialing), Toast.LENGTH_SHORT).show();
@@ -161,7 +165,6 @@ public class AllFragment extends Fragment {
             }
             return true;
         }
-
     });
 
     public AllFragment() {
@@ -183,109 +186,50 @@ public class AllFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_all, container, false);
 
+        sp_year  = (Spinner) v.findViewById(R.id.AllF_sp_year);
+        sp_month = (Spinner) v.findViewById(R.id.AllF_sp_month);
+        sp_day   = (Spinner) v.findViewById(R.id.AllF_sp_day);
+
+        btn_certain = (Button) v.findViewById(R.id.AllF_b_certain);
+        btn_cancel  = (Button) v.findViewById(R.id.AllF_b_cancle);
+
+        try {
+            btn_certain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        IndexActivity.which_year = selected_year;
+                        IndexActivity.which_month = selected_month;
+                        IndexActivity.which_day = selected_day;
+
+                        iniSpin();
+                        setRV();
+
+                        btn_certain.setVisibility(View.GONE);
+                        btn_cancel.setVisibility(View.GONE);
+                    } catch (Exception e) {
+
+                    }
+                }
+            });
+
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    btn_certain.setVisibility(View.GONE);
+                    btn_cancel.setVisibility(View.GONE);
+                }
+            });
+        } catch (Exception e) {
+
+        }
+
         Calendar cal = Calendar.getInstance();
-        int default_year = cal.get(Calendar.YEAR);
-        int default_month = cal.get(Calendar.MONTH) + 1;
-        int default_day = cal.get(Calendar.DAY_OF_MONTH);
+        default_year = cal.get(Calendar.YEAR);
+        default_month = cal.get(Calendar.MONTH) + 1;
+        default_day = cal.get(Calendar.DAY_OF_MONTH);
 
-        Spinner spinner = (Spinner) v.findViewById(R.id.AllF_sp_year);
-        final ArrayList datalist1 = new ArrayList<String>();
-        datalist1.add("" + IndexActivity.which_year);
-
-        for(int i = default_year ; i >= default_year-2; i--) {
-            if (i != Integer.parseInt(IndexActivity.which_year)) {
-                datalist1.add("" + i);
-            }
-        }
-
-        SpinnerAdapter adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist1);
-        spinner.setAdapter(adaper);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                disCertain.sendEmptyMessage(1);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                disCertain.sendEmptyMessage(0);
-            }
-        });
-
-        spinner = (Spinner) v.findViewById(R.id.AllF_sp_month);
-        final ArrayList datalist2 = new ArrayList<String>();
-        datalist2.add(IndexActivity.which_month + "");
-        for (int i = default_month; ; i--) {
-            if (i == default_month && (datalist2.size() == 12)) {
-                break;
-            }
-            if (i != Integer.parseInt(IndexActivity.which_month)) {
-                datalist2.add(i + "");
-            }
-            if (i == 1) {
-                i = 13;
-            }
-        }
-        adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist2);
-        spinner.setAdapter(adaper);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                disCertain.sendEmptyMessage(1);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                disCertain.sendEmptyMessage(0);
-            }
-        });
-
-        spinner = (Spinner) v.findViewById(R.id.AllF_sp_day);
-        final ArrayList datalist3 = new ArrayList<String>();
-        datalist3.add(IndexActivity.which_day + "");
-
-        MonthDay monthDay = new MonthDay();
-        for (int i = default_day; ; i--) {
-            if (i == default_day && (datalist3.size() >= 28) ) {
-                break;
-            }
-            if ((i != Integer.parseInt(IndexActivity.which_day))) {
-                datalist3.add(i + "");
-            }
-            if (i == 1) i= monthDay.getByMonthDay(Integer.parseInt(IndexActivity.which_month)) + 1;
-
-        }
-        adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist3);
-        spinner.setAdapter(adaper);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                disCertain.sendEmptyMessage(1);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                disCertain.sendEmptyMessage(0);
-            }
-        });
-
-        /*
-        Button button = (Button) v.findViewById(R.id.AllF_b_certain);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        button = (Button) v.findViewById(R.id.AllF_b_cancle);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                disCertain.sendEmptyMessage(0);
-            }
-        });
-        */
+        iniSpin();
 
         return v;
     }
@@ -316,29 +260,85 @@ public class AllFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState)  {
-        super.onActivityCreated(savedInstanceState);
-
-        Calendar cal = Calendar.getInstance();
-        int default_year = cal.get(Calendar.YEAR);
-        int default_month = cal.get(Calendar.MONTH) + 1;
-        int default_day = cal.get(Calendar.DAY_OF_MONTH);
-
-        try {
-            this.recyclerView = (RecyclerView) getView().findViewById(R.id.AllF_re);
-            Log.v("AllF", "get recycler view success.:" + this.recyclerView);
-        } catch (Exception e) {
-            Log.v("AllF", "get recuclerview feiled," + e.getMessage());
+    public void iniSpin() {
+        datalist1 = new ArrayList<String>();
+        datalist1.add("" + IndexActivity.which_year);
+        for(int i = default_year ; i >= default_year-2; i--) {
+            if (i != Integer.parseInt(IndexActivity.which_year)) {
+                datalist1.add("" + i);
+            }
         }
+        SpinnerAdapter adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist1);
+        sp_year.setAdapter(adaper);
+        sp_year.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disCertain.sendEmptyMessage(1);
+            }
 
-        recyclerView.removeAllViews();
-        bills.clear();
-        Log.v("my_bills:", bills.toString());
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        AllFragment.recyclerView.setLayoutManager(layoutManager);
 
+        datalist2 = new ArrayList<String>();
+        datalist2.add(IndexActivity.which_month + "");
+        for (int i = default_month; ; i--) {
+            if (i == default_month && (datalist2.size() == 12)) {
+                break;
+            }
+            if (i != Integer.parseInt(IndexActivity.which_month)) {
+                datalist2.add(i + "");
+            }
+            if (i == 1) {
+                i = 13;
+            }
+        }
+        adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist2);
+        sp_month.setAdapter(adaper);
+        sp_month.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disCertain.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
+
+        datalist3 = new ArrayList<String>();
+        datalist3.add(IndexActivity.which_day + "");
+        MonthDay monthDay = new MonthDay();
+        for (int i = default_day; ; i--) {
+            if (i == default_day && (datalist3.size() >= 28) ) {
+                break;
+            }
+            if ((i != Integer.parseInt(IndexActivity.which_day))) {
+                datalist3.add(i + "");
+            }
+            if (i == 1) i= monthDay.getByMonthDay(Integer.parseInt(IndexActivity.which_month)) + 1;
+
+        }
+        adaper = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, datalist3);
+        sp_day.setAdapter(adaper);
+        sp_day.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disCertain.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                disCertain.sendEmptyMessage(0);
+            }
+        });
+    }
+
+    public void setRV() {
         OkHttpClient client = new OkHttpClient();
 
         SharedPreferences sharedPreferences =  getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
@@ -356,7 +356,6 @@ public class AllFragment extends Fragment {
                 .get()
                 .url(the_url)
                 .build();
-        Log.v("my_all", " construt url : the_url" + the_url);
 
         Call call = client.newCall(request);
         Callback callback = new Callback() {
@@ -370,7 +369,6 @@ public class AllFragment extends Fragment {
                 String result = response.body().string();
                 Log.v("my_all", "bills: " + result);
                 try {
-
                     JSONObject jsonObject = new JSONObject(result);
                     if (jsonObject.getInt("status") == 1) {
                         AllFragment.my_get = jsonObject.getInt("my_get");
@@ -382,12 +380,8 @@ public class AllFragment extends Fragment {
 
                         JSONArray jsonArray = jsonObject.getJSONArray("bills");
 
-                        JSONObject jsonObject2 = jsonArray.getJSONObject(0);
-
-                        String s1 = jsonObject2.getString("io");
-                        Log.v("my_all","j1 :get io success:" + s1);
-
                         try {
+                            bills = new ArrayList<Map<String, String>>();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 Map<String, String> map = new HashMap<String, String>();
@@ -409,48 +403,20 @@ public class AllFragment extends Fragment {
                                     Toast.makeText(getContext(), getString(R.string.initialing), Toast.LENGTH_SHORT).show();
                                 }
                             }
-
-
                         } catch (Exception e) {
-                            Log.v("my_all", "generate array fied" + e.getMessage());
+
                         }
-                        Log.v("my_all", "json array: " +  jsonArray);
-                        Log.v("my_all", "real bills: " +  bills);
 
                     } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle(getResources().getString(R.string.failure));
-
-                        Msg msg = new Msg(getActivity());
-
-                        builder.setMessage(msg.get(jsonObject.getString("msgname")));
-
-                        builder.setCancelable(true);
-                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        Looper.prepare();
-                        AlertDialog dialog = builder.create();
-                        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                            @Override
-                            public void onShow(DialogInterface dialog) {
-                            }
-                        });
-                        //对话框消失的监听事件
-                        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                            }
-                        });
-                        dialog.show();
-                        Looper.loop();
+                        if (jsonObject.getString("msgname").equals("need_update")) {
+                            disPrompt.sendEmptyMessage(1);
+                        } else {
+                            Msg msg = new Msg(getActivity());
+                            msg.certainMsg(msg.get(jsonObject.getString("msgname")), getString(R.string.failure));
+                        }
                     }
                 } catch (Exception e) {
-                    Log.v("my_all", "parse json failed ");
+
                 }
             }
         };
@@ -462,35 +428,28 @@ public class AllFragment extends Fragment {
             msg.certainMsg(getString(R.string.unknown_error),getString(R.string.certain));
         }
 
-        disCertain.sendEmptyMessage(0);
 
         try {
-            Button button = getActivity().findViewById(R.id.AllF_b_certain);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        FragmentManager fragmentManager = getFragmentManager();
-                        Fragment AllF  = AllFragment.newInstance();
-                        fragmentManager.beginTransaction().replace(R.id.home_container, AllF).commit();
-                        //getActivity().finish();
-                    } catch (Exception e) {
-
-                    }
-                }
-            });
-
-            Button button2 = getActivity().findViewById(R.id.AllF_b_cancle);
-            button2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                   button.setVisibility(View.GONE);
-                   button2.setVisibility(View.GONE);
-                }
-            });
+            this.recyclerView = (RecyclerView) getView().findViewById(R.id.AllF_re);
         } catch (Exception e) {
 
         }
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        AllFragment.recyclerView.setLayoutManager(layoutManager);
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)  {
+        super.onActivityCreated(savedInstanceState);
+
+        setRV();
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
 }

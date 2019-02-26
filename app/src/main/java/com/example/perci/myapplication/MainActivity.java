@@ -54,11 +54,21 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
+    public  Handler disPrompt=new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            Msg msg1 = new Msg(MainActivity.this);
+            msg1.disPrompt();
+            return true;
+        }
+
+    });
+
     public  Handler versionHandler=new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             try {
-                String the_url = MainActivity.SERVER_URL + "/isPrompt";
+                String the_url = MainActivity.SERVER_URL + "/isPrompt?version=" + getString(R.string.versionCode);
                 Request request = new Request.Builder()
                         .get()
                         .url(the_url)
@@ -79,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(result);
 
                             if (jsonObject.getInt("status") == 1) {
-                                alertPrompt.sendEmptyMessage(1);
+                                disPrompt.sendEmptyMessage(1);
                                 is_prompt = 1;
                             } else {
                                 is_prompt = 0;
@@ -124,53 +134,6 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(MainActivity.this).load(startjpg_src).into((ImageView) findViewById(R.id.startJpg));
             } catch (Exception e) {
 
-            }
-
-            return true;
-        }
-    });
-
-    public  Handler alertPrompt =new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            try {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                AlertDialog dialog = builder.create();
-                View dialogView = View.inflate(MainActivity.this, R.layout.user_state, null);
-
-                WebView webView = (WebView) dialogView.findViewById(R.id.user_state_web);
-                webView.setWebViewClient(new WebViewClient() {
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-                });
-
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setDomStorageEnabled(true);
-                webView.getSettings().setBuiltInZoomControls(true);
-                webView.loadUrl(MainActivity.SERVER_URL + "/prompt");
-
-                dialog.setView(dialogView);
-                dialog.setCancelable(false);
-                dialog.show();
-
-                Window window = dialog.getWindow();
-                //这一句消除白块
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                Button btnSubmit = (Button) dialogView.findViewById(R.id.user_state_certain);
-
-                btnSubmit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            } catch (Exception e) {
-                Log.v("mainA","alertPromt failed,error:" + e.getMessage());
             }
 
             return true;
@@ -246,7 +209,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (is_prompt == -1) {
-                    Toast.makeText(MainActivity.this, getString(R.string.initialing), Toast.LENGTH_SHORT);
+                    try {
+                        Toast.makeText(MainActivity.this, getString(R.string.initialing), Toast.LENGTH_SHORT);
+                    } catch (Exception e) {
+                        Log.v("mainAc.java", "click button when is_prompt not set, error:" + e.getMessage());
+                    }
                 } else {
                     Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
                     startActivity(intent);

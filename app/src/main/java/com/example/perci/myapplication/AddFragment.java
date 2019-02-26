@@ -64,6 +64,16 @@ public class AddFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    public  Handler disPrompt=new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            Msg msg1 = new Msg(getContext());
+            msg1.disPrompt();
+            return true;
+        }
+
+    });
+
     public Handler uiHandler=new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -332,17 +342,20 @@ public class AddFragment extends Fragment {
                                 try {
                                     JSONObject jsonObject = new JSONObject(result);
 
-                                    Msg msg = new Msg(getContext());
-
                                     if (jsonObject.getInt("status") == 1) {
                                         addStatusMessage = getString(R.string.success);
+                                        uiHandler.sendEmptyMessage(1);
                                     } else {
-                                        addStatusMessage = getString(R.string.failure);
-                                        addFailedMessage = msg.get(jsonObject.getString("msgname"));
+                                        if (jsonObject.getString("msgname").equals("need_update")) {
+                                            disPrompt.sendEmptyMessage(1);
+                                        } else {
+                                            Msg msg = new Msg(getContext());
+                                            addStatusMessage = getString(R.string.failure);
+                                            addFailedMessage = msg.get(jsonObject.getString("msgname"));
+                                            uiHandler.sendEmptyMessage(1);
+                                        }
                                     }
 
-
-                                    uiHandler.sendEmptyMessage(1);
                                 } catch (Exception e) {
                                     Log.v("my_request", "add,parse json failed,error messag:" + e.getMessage());
                                 }

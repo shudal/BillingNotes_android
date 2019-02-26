@@ -60,101 +60,33 @@ public class Msg {
     public String get(String key) {
         String message = context.getString(R.string.unknown_error);
 
-        /*
-        try {
-            if (key.equals("need_update")) {
-                Looper.prepare();
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
-                AlertDialog dialog = builder.create();
-                View dialogView = View.inflate(context, R.layout.user_state, null);
-
-                WebView webView = (WebView) dialogView.findViewById(R.id.user_state_web);
-                webView.setWebViewClient(new WebViewClient() {
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-                });
-
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setDomStorageEnabled(true);
-                webView.getSettings().setBuiltInZoomControls(true);
-                webView.loadUrl(MainActivity.SERVER_URL + "/prompt");
-
-                dialog.setView(dialogView);
-                dialog.setCancelable(false);
-                dialog.show();
-                Window window = dialog.getWindow();
-                //这一句消除白块
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                Button btnSubmit = (Button) dialogView.findViewById(R.id.user_state_certain);
-
-                btnSubmit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                Looper.loop();
-            }
-        }catch (Exception e) {
-                Log.v("Msg.java", "error:" + e.getMessage());
-        } */
         try {
             message = map.get(key);
 
             if (message == null) {
-                message =  context.getString(R.string.unknown_error);
+                message = context.getString(R.string.unknown_error);
             }
 
-            if (message.equals(context.getString(R.string.login_expired))) {
+            if (key.equals("login_expired")) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("timeout", "");
                 editor.commit();
 
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
-                builder.setTitle(context.getString(R.string.failure));
+                this.certainMsg(context.getString(R.string.login_expired), context.getString(R.string.failure));
 
-                builder.setMessage(context.getString(R.string.login_expired));
-
-                builder.setCancelable(true);
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(context, LoginIndexActivity.class);
-                        context.startActivity(intent);
-                    }
-                });
-                Looper.prepare();
-                android.support.v7.app.AlertDialog dialog = builder.create();
-                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-                    }
-                });
-                //对话框消失的监听事件
-                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                    }
-                });
-                dialog.show();
-                Looper.loop();
+                Intent intent = new Intent(context, LoginIndexActivity.class);
+                context.startActivity(intent);
             }
-            Log.v("the_message", ":" + message);
         } catch (Exception e) {
-            Log.v("my_msg","error:" + e.getMessage());
+            Log.v("Msg.java","get() failed,error:" +e.getMessage());
+
         }
 
         return  message;
     }
 
-    public String certainMsg(String msg, String title) {
+    public void certainMsg(String msg, String title) {
 
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
         builder.setTitle(title);
@@ -163,8 +95,7 @@ public class Msg {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(context, LoginIndexActivity.class);
-                context.startActivity(intent);
+                dialog.dismiss();
             }
         });
         Looper.prepare();
@@ -174,7 +105,6 @@ public class Msg {
             public void onShow(DialogInterface dialog) {
             }
         });
-        //对话框消失的监听事件
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -183,6 +113,47 @@ public class Msg {
         dialog.show();
         Looper.loop();
 
-        return "";
+    }
+
+    public void disPrompt() {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog dialog = builder.create();
+            View dialogView = View.inflate(context, R.layout.user_state, null);
+
+            WebView webView = (WebView) dialogView.findViewById(R.id.user_state_web);
+            webView.setWebViewClient(new WebViewClient() {
+
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    view.loadUrl(url);
+                    return true;
+                }
+            });
+
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setDomStorageEnabled(true);
+            webView.getSettings().setBuiltInZoomControls(true);
+            webView.loadUrl(MainActivity.SERVER_URL + "/prompt");
+
+            dialog.setView(dialogView);
+            dialog.setCancelable(false);
+            dialog.show();
+
+            Window window = dialog.getWindow();
+            //这一句消除白块
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            Button btnSubmit = (Button) dialogView.findViewById(R.id.user_state_certain);
+
+            btnSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+        } catch (Exception e) {
+            Log.v("Msg.java", "prompt failed,error:" + e.getMessage());
+        }
     }
 }
