@@ -27,8 +27,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.perci.myapplication.R;
-import com.github.dfqin.grantor.PermissionListener;
-import com.github.dfqin.grantor.PermissionsUtil;
 
 import org.json.JSONObject;
 
@@ -57,12 +55,6 @@ public class MainActivity extends AppCompatActivity {
     public int is_prompt = -1;
     public static long versionCode;
 
-/*
-    private static final String[] m_Permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.SYSTEM_ALERT_WINDOW};
-*/
-private static final String[] m_Permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE};
     public static void handleSSLHandshake() {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -210,15 +202,17 @@ private static final String[] m_Permissions = {Manifest.permission.READ_EXTERNAL
         }
     });
 
-    /*
+
     //读写权限
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+    };
     //请求状态码
     private static int REQUEST_PERMISSION_CODE = 1;
-    */
-/*
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -228,43 +222,21 @@ private static final String[] m_Permissions = {Manifest.permission.READ_EXTERNAL
             }
         }
     }
-*/
 
 
-    private void requestCemera() {
-        if (PermissionsUtil.hasPermission(this,m_Permissions)) {
-            //有访问存储空间、摄像头的权限
-        } else {
-            PermissionsUtil.requestPermission(this, new PermissionListener() {
-                @Override
-                public void permissionGranted(@NonNull String[] permissions) {
-                    //用户授予了访问存储空间、摄像头的权限
-                }
 
 
-                @Override
-                public void permissionDenied(@NonNull String[] permissions) {
-                    //用户拒绝了访问存储空间、摄像头的申请
-                }
-            }, m_Permissions);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        requestCemera();
-
-
-        /*
-
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (  (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ) ||(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )|| (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
-            }\
-        }*/
+            }
+        }
 
         handleSSLHandshake();
 
