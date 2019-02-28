@@ -1,4 +1,4 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import java.security.MessageDigest;
 

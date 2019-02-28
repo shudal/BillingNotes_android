@@ -1,4 +1,4 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,6 +22,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.perci.myapplication.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -339,7 +340,8 @@ public class AllFragment extends Fragment {
     }
 
     public void setRV() {
-        OkHttpClient client = new OkHttpClient();
+        Cer cer = new Cer();
+        OkHttpClient client = cer.getTrustAllClient();
 
         SharedPreferences sharedPreferences =  getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
         String sessionid = sharedPreferences.getString("sessionid", "");

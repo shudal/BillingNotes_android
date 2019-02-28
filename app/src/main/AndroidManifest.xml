@@ -13,6 +13,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -21,16 +23,17 @@
         android:roundIcon="@drawable/note"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="moe.perci.haku.BillingNotes.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginIndexActivity" />
-        <activity android:name=".IndexActivity" />
-        <activity android:name=".RegisIndexActivity" />
-        <activity android:name=".ServerFailed" />
+        <activity android:name="moe.perci.haku.BillingNotes.LoginIndexActivity" />
+        <activity android:name="moe.perci.haku.BillingNotes.IndexActivity" />
+        <activity android:name="moe.perci.haku.BillingNotes.RegisIndexActivity" />
+        <activity android:name="moe.perci.haku.BillingNotes.ServerFailed" />
     </application>
 
 </manifest>

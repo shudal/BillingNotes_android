@@ -1,4 +1,4 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.example.perci.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.List;

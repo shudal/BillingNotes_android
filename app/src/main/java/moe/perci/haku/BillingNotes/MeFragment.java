@@ -1,4 +1,4 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -37,6 +39,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import android.view.Window;
+
+
+import com.example.perci.myapplication.R;
 
 public class MeFragment extends Fragment {
     public static String nickname;
@@ -238,7 +243,8 @@ public class MeFragment extends Fragment {
                             sha1.setS(token);
                             token = sha1.data;
 
-                            OkHttpClient client = new OkHttpClient();
+                            Cer cer = new Cer();
+                            OkHttpClient client = cer.getTrustAllClient();
                             FormBody formBody = new FormBody.Builder()
                                     .add("sessionid", sessionid)
                                     .add("token", token)
@@ -325,7 +331,8 @@ public class MeFragment extends Fragment {
                             sha1.setS(token);
                             token = sha1.data;
 
-                            OkHttpClient client = new OkHttpClient();
+                            Cer cer = new Cer();
+                            OkHttpClient client = cer.getTrustAllClient();
                             FormBody formBody = new FormBody.Builder()
                                     .add("sessionid", sessionid)
                                     .add("token", token)
@@ -412,7 +419,8 @@ public class MeFragment extends Fragment {
                             sha1.setS(token);
                             token = sha1.data;
 
-                            OkHttpClient client = new OkHttpClient();
+                            Cer cer = new Cer();
+                            OkHttpClient client = cer.getTrustAllClient();
                             FormBody formBody = new FormBody.Builder()
                                     .add("sessionid", sessionid)
                                     .add("token", token)
@@ -499,7 +507,8 @@ public class MeFragment extends Fragment {
                             sha1.setS(token);
                             token = sha1.data;
 
-                            OkHttpClient client = new OkHttpClient();
+                            Cer cer = new Cer();
+                            OkHttpClient client = cer.getTrustAllClient();
                             FormBody formBody = new FormBody.Builder()
                                     .add("sessionid", sessionid)
                                     .add("token", token)
@@ -561,11 +570,13 @@ public class MeFragment extends Fragment {
 
                     WebView webView = (WebView) dialogView.findViewById(R.id.user_state_web);
                     webView.setWebViewClient(new WebViewClient() {
-
                         @Override
-                        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                            view.loadUrl(url);
-                            return true;
+                        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+//                super.onReceivedSslError(view, handler, error);
+                            //handler.cancel();// super中默认的处理方式，WebView变成空白页
+                            if (handler != null) {
+                                handler.proceed();//忽略证书的错误继续加载页面内容，不会变成空白页面
+                            }
                         }
                     });
 
@@ -628,7 +639,8 @@ public class MeFragment extends Fragment {
                             sha1.setS(token);
                             token = sha1.data;
 
-                            OkHttpClient client = new OkHttpClient();
+                            Cer cer = new Cer();
+                            OkHttpClient client = cer.getTrustAllClient();
                             FormBody formBody = new FormBody.Builder()
                                     .add("sessionid", sessionid)
                                     .add("token", token)
@@ -683,7 +695,8 @@ public class MeFragment extends Fragment {
                 }
             });
 
-            OkHttpClient client = new OkHttpClient();
+            Cer cer = new Cer();
+            OkHttpClient client = cer.getTrustAllClient();
 
             String the_url = MainActivity.SERVER_URL + "usermeta?sessionid=" + sessionid + "&token=" + token;
 

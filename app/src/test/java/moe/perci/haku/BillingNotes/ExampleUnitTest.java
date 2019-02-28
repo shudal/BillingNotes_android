@@ -1,4 +1,4 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import org.junit.Test;
 

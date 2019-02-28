@@ -1,4 +1,4 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,18 +6,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
+import android.net.http.SslError;
 import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.perci.myapplication.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,11 +123,13 @@ public class Msg {
 
             WebView webView = (WebView) dialogView.findViewById(R.id.user_state_web);
             webView.setWebViewClient(new WebViewClient() {
-
                 @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    view.loadUrl(url);
-                    return true;
+                public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+//                super.onReceivedSslError(view, handler, error);
+                    //handler.cancel();// super中默认的处理方式，WebView变成空白页
+                    if (handler != null) {
+                        handler.proceed();//忽略证书的错误继续加载页面内容，不会变成空白页面
+                    }
                 }
             });
 

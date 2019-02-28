@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/border_1"
-    tools:context=".MeFragment">
+    tools:context="moe.perci.haku.BillingNotes.MeFragment">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/MeF_c_nickname"

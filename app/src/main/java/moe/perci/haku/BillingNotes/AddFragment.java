@@ -1,23 +1,16 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.ImageDecoder;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +19,6 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -34,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.perci.myapplication.R;
 
 import org.json.JSONObject;
 
@@ -47,8 +41,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class AddFragment extends Fragment {
     public String AddF_year;
@@ -307,7 +299,8 @@ public class AddFragment extends Fragment {
                     token = sha1.data;
 
                     try {
-                        OkHttpClient client = new OkHttpClient();
+                        Cer cer = new Cer();
+                        OkHttpClient client = cer.getTrustAllClient();
                         FormBody formBody = new FormBody.Builder()
                                 .add("year", AddF_year)
                                 .add("month", AddF_month)

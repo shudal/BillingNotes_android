@@ -1,12 +1,14 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+
+import com.example.perci.myapplication.R;
 
 import java.io.IOException;
 
@@ -39,7 +41,8 @@ public class ServerFailed extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_failed);
 
-        OkHttpClient client = new OkHttpClient();
+        Cer cer = new Cer();
+        OkHttpClient client = cer.getTrustAllClient();
         String the_url = getResources().getString(R.string.server_failed_message_text_url);
 
         Request request = new Request.Builder()

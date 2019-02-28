@@ -1,17 +1,15 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Looper;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.perci.myapplication.R;
 
 import org.json.JSONObject;
 
@@ -84,7 +82,8 @@ public class RegisIndexActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.editText);
         String nickname = editText.getText().toString();
 
-        OkHttpClient client = new OkHttpClient();
+        Cer cer = new Cer();
+        OkHttpClient client = cer.getTrustAllClient();
         FormBody formBody = new FormBody.Builder()
                 .add("username",username)
                 .add("password",password)

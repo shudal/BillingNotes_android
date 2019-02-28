@@ -1,39 +1,43 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.example.perci.myapplication.R;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Calendar;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,6 +49,35 @@ public class MainActivity extends AppCompatActivity {
     public int is_prompt = -1;
     public static long versionCode;
 
+    public static void handleSSLHandshake() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
+
+            SSLContext sc = SSLContext.getInstance("TLS");
+            // trustAllCerts信任所有的证书
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        } catch (Exception ignored) {
+        }
+    }
     public  Handler serverFailedHandler=new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -73,12 +106,14 @@ public class MainActivity extends AppCompatActivity {
                         .get()
                         .url(the_url)
                         .build();
-                OkHttpClient client = new OkHttpClient();
+                Cer cer = new Cer();
+                OkHttpClient client = cer.getTrustAllClient();
                 Call call = client.newCall(request);
 
                 Callback callBack = new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        Log.v("mainA","request isPormt? failed,error:" + e.getMessage());
                     }
 
                     @Override
@@ -118,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 };
                 call.enqueue(callBack);
             } catch (Exception e) {
-                Log.v("MainA", "get whether update fail");
+                Log.v("mainA", "get whether update fail");
             }
 
             return true;
@@ -131,9 +166,30 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String startjpg_src = MainActivity.STATIC_URL + "img/start.jpg";
                 Log.v("Startjpg", startjpg_src);
-                Glide.with(MainActivity.this).load(startjpg_src).into((ImageView) findViewById(R.id.startJpg));
-            } catch (Exception e) {
+                try {
+                    Log.v("Startjpg","set start jpg process1");
+                    RequestListener mRequestListener = new RequestListener() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
+                            Log.d("Startjpg", "onException: " + e.toString()+"  model:"+model+" isFirstResource: "+isFirstResource);
+                            return false;
+                        }
 
+                        @Override
+                        public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                            Log.e("Startjpg",  "model:"+model+" isFirstResource: "+isFirstResource);
+                            return false;
+                        }
+                    };
+                    Glide.with(MainActivity.this).load(startjpg_src).listener(mRequestListener).into((ImageView) findViewById(R.id.startJpg));
+
+
+                    Log.v("Startjpg","set start jpg process2");
+                } catch (Exception e) {
+                    Log.v("Startjpg","glide set start jpg failed,error:" + e.getMessage());
+                }
+            } catch (Exception e) {
+                Log.v("Startjpg","setStartjpg handler failed. error:" + e.getMessage());
             }
 
             return true;
@@ -146,8 +202,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        handleSSLHandshake();
+
         //得到服务器url
-        OkHttpClient client = new OkHttpClient();
+        Cer cer = new Cer();
+        OkHttpClient client = cer.getTrustAllClient();
         String the_url = getResources().getString(R.string.SERVER_ADDRESS_TXT_URL);
 
         Request request = new Request.Builder()
@@ -185,7 +244,8 @@ public class MainActivity extends AppCompatActivity {
                 .get()
                 .url(the_url)
                 .build();
-        client = new OkHttpClient();
+        cer = new Cer();
+        client = cer.getTrustAllClient();
         call = client.newCall(request);
 
         callBack = new Callback() {
@@ -208,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 if (is_prompt == -1) {
                     try {
                         Toast.makeText(MainActivity.this, getString(R.string.initialing), Toast.LENGTH_SHORT);
@@ -218,6 +279,9 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
                     startActivity(intent);
                 }
+                */
+                Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
+                startActivity(intent);
             }
         });
 

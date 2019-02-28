@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/border_1"
-        tools:context=".AddFragment"
+        tools:context="moe.perci.haku.BillingNotes.AddFragment"
     >
         <Spinner
         android:id="@+id/AddF_sp_year"

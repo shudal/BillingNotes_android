@@ -1,39 +1,17 @@
-package com.example.perci.myapplication;
+package moe.perci.haku.BillingNotes;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.design.bottomappbar.BottomAppBar;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.hjm.bottomtabbar.BottomTabBar;
+import com.example.perci.myapplication.R;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 public class IndexActivity extends AppCompatActivity implements  AddFragment.OnFragmentInteractionListener, AllFragment.OnFragmentInteractionListener, MeFragment.OnFragmentInteractionListener{
     private BottomNavigationView mBottomNavigationView;
