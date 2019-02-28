@@ -1,11 +1,17 @@
 package moe.perci.haku.BillingNotes;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +27,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.perci.myapplication.R;
+import com.github.dfqin.grantor.PermissionListener;
+import com.github.dfqin.grantor.PermissionsUtil;
 
 import org.json.JSONObject;
 
@@ -49,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
     public int is_prompt = -1;
     public static long versionCode;
 
+/*
+    private static final String[] m_Permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.SYSTEM_ALERT_WINDOW};
+*/
+private static final String[] m_Permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE};
     public static void handleSSLHandshake() {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -196,11 +210,61 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
+    /*
+    //读写权限
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    //请求状态码
+    private static int REQUEST_PERMISSION_CODE = 1;
+    */
+/*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            for (int i = 0; i < permissions.length; i++) {
+                Log.i("MainActivity", "申请的权限为：" + permissions[i] + ",申请结果：" + grantResults[i]);
+            }
+        }
+    }
+*/
+
+
+    private void requestCemera() {
+        if (PermissionsUtil.hasPermission(this,m_Permissions)) {
+            //有访问存储空间、摄像头的权限
+        } else {
+            PermissionsUtil.requestPermission(this, new PermissionListener() {
+                @Override
+                public void permissionGranted(@NonNull String[] permissions) {
+                    //用户授予了访问存储空间、摄像头的权限
+                }
+
+
+                @Override
+                public void permissionDenied(@NonNull String[] permissions) {
+                    //用户拒绝了访问存储空间、摄像头的申请
+                }
+            }, m_Permissions);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestCemera();
+
+
+        /*
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
+            }\
+        }*/
 
         handleSSLHandshake();
 
@@ -215,9 +279,11 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Call call = client.newCall(request);
 
+        Log.v("mainA","1");
         Callback callBack = new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.v("mainA","call onFailure, error:" + e.getMessage());
             }
 
             @Override
@@ -268,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
+
                 if (is_prompt == -1) {
                     try {
                         Toast.makeText(MainActivity.this, getString(R.string.initialing), Toast.LENGTH_SHORT);
@@ -279,9 +345,9 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
                     startActivity(intent);
                 }
-                */
+                /*
                 Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
-                startActivity(intent);
+                startActivity(intent); */
             }
         });
 
