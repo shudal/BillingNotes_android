@@ -1,7 +1,6 @@
 package moe.perci.haku.BillingNotes;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,22 +9,14 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.perci.myapplication.R;
 
 import org.json.JSONObject;
@@ -54,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     public static int server_status= 0;
     public int is_prompt = -1;
     public static long versionCode;
+
+    public SharedPreferences sharedPreferences;
 
     public static void handleSSLHandshake() {
         try {
@@ -93,116 +86,6 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
-    public  Handler disPrompt=new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            Msg msg1 = new Msg(MainActivity.this);
-            msg1.disPrompt();
-            return true;
-        }
-
-    });
-
-    public  Handler versionHandler=new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            try {
-                String the_url = MainActivity.SERVER_URL + "/isPrompt?version=" + getString(R.string.versionCode);
-                Request request = new Request.Builder()
-                        .get()
-                        .url(the_url)
-                        .build();
-                Cer cer = new Cer();
-                OkHttpClient client = cer.getTrustAllClient();
-                Call call = client.newCall(request);
-
-                Callback callBack = new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.v("mainA","request isPormt? failed,error:" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String result = response.body().string();
-                        Log.v("mainA", "versionHandler request result:" + result);
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-
-                            if (jsonObject.getInt("status") == 1) {
-                                disPrompt.sendEmptyMessage(1);
-                                is_prompt = 1;
-                            } else {
-                                is_prompt = 0;
-
-                                SharedPreferences sharedPreferences =  getSharedPreferences("token", Context.MODE_PRIVATE);
-
-                                //已登陆则跳转到IndexActivity
-                                String timeout = sharedPreferences.getString("timeout","");
-                                if (timeout != "") {
-                                    Long now = Calendar.getInstance().getTimeInMillis();
-                                    now /= 1000; //将十三位时间戳转换为十位。
-
-                                    Long timeout_2 = Long.parseLong(timeout);
-
-                                    if (now < timeout_2) {
-                                        Intent intent = new Intent(MainActivity.this, IndexActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            Log.v("mainA", "parse whether update failed,error:" + e.getMessage());
-                        }
-                    }
-                };
-                call.enqueue(callBack);
-            } catch (Exception e) {
-                Log.v("mainA", "get whether update fail");
-            }
-
-            return true;
-        }
-    });
-
-    public  Handler setStartjpg =new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            try {
-                String startjpg_src = MainActivity.STATIC_URL + "img/start.jpg";
-                Log.v("Startjpg", startjpg_src);
-                try {
-                    Log.v("Startjpg","set start jpg process1");
-                    RequestListener mRequestListener = new RequestListener() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
-                            Log.d("Startjpg", "onException: " + e.toString()+"  model:"+model+" isFirstResource: "+isFirstResource);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                            Log.e("Startjpg",  "model:"+model+" isFirstResource: "+isFirstResource);
-                            return false;
-                        }
-                    };
-                    Glide.with(MainActivity.this).load(startjpg_src).listener(mRequestListener).into((ImageView) findViewById(R.id.startJpg));
-
-
-                    Log.v("Startjpg","set start jpg process2");
-                } catch (Exception e) {
-                    Log.v("Startjpg","glide set start jpg failed,error:" + e.getMessage());
-                }
-            } catch (Exception e) {
-                Log.v("Startjpg","setStartjpg handler failed. error:" + e.getMessage());
-            }
-
-            return true;
-        }
-    });
-
-
     //读写权限
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -224,22 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            if (  (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ) ||(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )|| (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
-            }
-        }
-
-        handleSSLHandshake();
-
+    public void setServerUrlConfig() {
+        Log.v("mainAc", "setServerUrlConfig");
         //得到服务器url
         Cer cer = new Cer();
         OkHttpClient client = cer.getTrustAllClient();
@@ -269,8 +138,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.v("serveraddress", "equals!");
                 } else {
                     MainActivity.SERVER_URL  = result;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("SERVER_URL", result);
+                    editor.commit();
                     Log.v("serveraddress", "|"+result + "|equal?|" + result.equals("none"));
-                    versionHandler.sendEmptyMessage(1);
                 }
             }
         };
@@ -296,11 +167,95 @@ public class MainActivity extends AppCompatActivity {
                 String result = response.body().string();
                 result = result.trim();
                 MainActivity.STATIC_URL  = result;
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("STATIC_URL", result);
+                editor.commit();
                 Log.v("my_static", "set static url success! result:" + result);
-                setStartjpg.sendEmptyMessage(1);
             }
         };
         call.enqueue(callBack);
+
+        is_prompt = 1;
+        autoToIndex();
+    }
+
+    public void autoToIndex() {
+        //已登陆则跳转到IndexActivity
+        String timeout = sharedPreferences.getString("timeout","");
+        if (timeout != "") {
+            Long now = Calendar.getInstance().getTimeInMillis();
+            now /= 1000; //将十三位时间戳转换为十位。
+
+            Long timeout_2 = Long.parseLong(timeout);
+
+            if (now < timeout_2) {
+                Intent intent = new Intent(MainActivity.this, IndexActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            if (  (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ) ||(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )|| (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
+            }
+        }
+
+        handleSSLHandshake();
+
+        sharedPreferences =  getSharedPreferences("token", Context.MODE_PRIVATE);
+
+        Cer cer = new Cer();
+        OkHttpClient client = cer.getTrustAllClient();
+        String the_url = sharedPreferences.getString("SERVER_URL", "");
+        if (the_url.equals("")) {
+            Log.v("mainAc", "server url in sharedpreferences is null");
+            setServerUrlConfig();
+        } else {
+            the_url = the_url + "serverNormal";
+
+            Request request = new Request.Builder()
+                    .get()
+                    .url(the_url)
+                    .build();
+            Call call = client.newCall(request);
+            Callback callBack = new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.v("mainA", "call onFailure, error:" + e.getMessage());
+                    setServerUrlConfig();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+
+                        if (jsonObject.getInt("status") == 1) {
+                            Log.v("mainAc","server normal");
+                            MainActivity.SERVER_URL = sharedPreferences.getString("SERVER_URL", "");
+                            MainActivity.STATIC_URL = sharedPreferences.getString("STATIC_URL", "");
+                            is_prompt = 1;
+                            autoToIndex();
+                        } else {
+                            Log.v("mainAc","server unnormal, result:" + result);
+                            setServerUrlConfig();
+                        }
+
+                    } catch (Exception e) {
+
+                    }
+                }
+            };
+            call.enqueue(callBack);
+        }
 
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -317,9 +272,6 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
                     startActivity(intent);
                 }
-                /*
-                Intent intent = new Intent(MainActivity.this,LoginIndexActivity.class);
-                startActivity(intent); */
             }
         });
 
