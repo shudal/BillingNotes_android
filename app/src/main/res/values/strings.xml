@@ -104,4 +104,12 @@
 
     <string name="need_update">当前版本过低，请更新到最新版本。</string>
 
+    <string name="bill">账单</string>
+    <string name="note">笔记</string>
+
+    <string name="enter_tag">输入标签</string>
+    <string name="enter_sticky_notes_content">写入便签内容</string>
+    <string name="tag">标签</string>
+
+
 </resources>

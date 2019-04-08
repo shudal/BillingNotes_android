@@ -19,10 +19,11 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/note"
+        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:roundIcon="@drawable/note"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
         <activity android:name="moe.perci.haku.BillingNotes.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

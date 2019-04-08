@@ -214,6 +214,13 @@ public class AddFragment extends Fragment {
             }
         });
 
+        TextView textView = (TextView) v.findViewById(R.id.AddF_b_return);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_container, IndexActivity.allF).commit();
+            }
+        });
 
         return v;
     }

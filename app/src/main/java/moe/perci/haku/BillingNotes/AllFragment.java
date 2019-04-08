@@ -232,6 +232,32 @@ public class AllFragment extends Fragment {
 
         iniSpin();
 
+        TextView textView = (TextView) v.findViewById(R.id.NoteF_t_add);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_container, IndexActivity.addF).commit();
+            }
+        });
+
+        textView = (TextView) v.findViewById(R.id.AllF_t_refresh);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IndexActivity.allF = new AllFragment().newInstance();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_container, IndexActivity.allF).commit();
+            }
+        });
+
+        textView = (TextView) v.findViewById(R.id.AllF_t_setting);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_container, IndexActivity.meF).commit();
+            }
+        });
+
+
         return v;
     }
 

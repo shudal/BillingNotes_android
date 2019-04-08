@@ -13,23 +13,29 @@ import com.example.perci.myapplication.R;
 
 import java.util.Calendar;
 
-public class IndexActivity extends AppCompatActivity implements  AddFragment.OnFragmentInteractionListener, AllFragment.OnFragmentInteractionListener, MeFragment.OnFragmentInteractionListener{
+public class IndexActivity extends AppCompatActivity implements  AddFragment.OnFragmentInteractionListener, AllFragment.OnFragmentInteractionListener, MeFragment.OnFragmentInteractionListener, NoteFragment.OnFragmentInteractionListener, NoteAddFragment.OnFragmentInteractionListener{
     private BottomNavigationView mBottomNavigationView;
 
     public static String which_year;
     public static String which_month;
     public static String which_day;
 
+    public static Fragment addF;
+    public static Fragment allF;
+    public static Fragment meF;
+    public static Fragment noteF;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
 
-        Fragment addF = AddFragment.newInstance();
-        Fragment allF = AllFragment.newInstance();
-        Fragment meF  = MeFragment.newInstance();
+        addF = AddFragment.newInstance();
+        allF = AllFragment.newInstance();
+        meF  = MeFragment.newInstance();
+        noteF = NoteFragment.newInstance();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.home_container, AddFragment.newInstance()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.home_container, noteF).commit();
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_view);
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -42,7 +48,7 @@ public class IndexActivity extends AppCompatActivity implements  AddFragment.OnF
                 Fragment fragment = null;
                 switch (item.getItemId()){
                     case R.id.tab_menu_add:
-                        fragment = addF;
+                        fragment = noteF;
                         break;
                     case R.id.tab_menu_all:
                         fragment = allF;
